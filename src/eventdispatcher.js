@@ -6,29 +6,31 @@ if(eventjs === undefined) { var eventjs = {}; }
 var callbacklist = ns;
 if(typeof require === 'function') { callbacklist = require('./callbacklist.js'); }
 
-function _EventDispatcher(params)
+function EventDispatcher(params)
 {
 	this._eventCallbackListMap = {};
 	params = params || {};
 	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
 }
 
-_EventDispatcher.prototype.appendListener = function(event, callback)
+var proto = EventDispatcher.prototype;
+
+proto.appendListener = function(event, callback)
 {
 	return this._doGetCallbackList(event, true).append(callback);
 }
 
-_EventDispatcher.prototype.prependListener = function(event, callback)
+proto.prependListener = function(event, callback)
 {
 	return this._doGetCallbackList(event, true).prepend(callback);
 }
 
-_EventDispatcher.prototype.insertListener = function(event, callback, before)
+proto.insertListener = function(event, callback, before)
 {
 	return this._doGetCallbackList(event, true).insert(callback, before);
 }
 
-_EventDispatcher.prototype.removeListener = function(event, handle)
+proto.removeListener = function(event, handle)
 {
 	var cbList = this._doGetCallbackList(event, false);
 	if(cbList) {
@@ -38,7 +40,7 @@ _EventDispatcher.prototype.removeListener = function(event, handle)
 	return false;
 }
 
-_EventDispatcher.prototype.dispatch = function()
+proto.dispatch = function()
 {
 	if(this._getEvent) {
 		var cbList = this._doGetCallbackList(this._getEvent.apply(this, arguments), false);
@@ -56,7 +58,7 @@ _EventDispatcher.prototype.dispatch = function()
 	}
 }
 
-_EventDispatcher.prototype._doGetCallbackList = function(event, createOnNotFound)
+proto._doGetCallbackList = function(event, createOnNotFound)
 {
 	if(this._eventCallbackListMap.hasOwnProperty(event)) {
 		return this._eventCallbackListMap[event];
@@ -71,7 +73,7 @@ _EventDispatcher.prototype._doGetCallbackList = function(event, createOnNotFound
 	return null;
 }
 
-ns.EventDispatcher = _EventDispatcher;
+ns.EventDispatcher = EventDispatcher;
 
 if (typeof define === 'function' && define.amd) {
 	define(function () { return ns;	});

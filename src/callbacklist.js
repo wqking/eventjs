@@ -1,3 +1,5 @@
+/*eventjs v0.0.1, by wqking, https://github.com/wqking/eventjs, @preserve*/
+
 if(eventjs === undefined) { var eventjs = {}; }
 
 ;(function(ns) {
@@ -11,14 +13,16 @@ function Node(callback, counter)
 	this._counter = counter;
 }
 
-function _CallbackList()
+function CallbackList()
 {
 	this._head = null;
 	this._tail = null;
 	this._currentCounter = 0;
 }
 
-_CallbackList.prototype.append = function(callback)
+var proto = CallbackList.prototype;
+
+proto.append = function(callback)
 {
 	var node = new Node(callback, this._getNextCounter());
 
@@ -35,7 +39,7 @@ _CallbackList.prototype.append = function(callback)
 	return node;
 }
 
-_CallbackList.prototype.prepend = function(callback)
+proto.prepend = function(callback)
 {
 	var node = new Node(callback, this._getNextCounter());
 
@@ -52,7 +56,7 @@ _CallbackList.prototype.prepend = function(callback)
 	return node;
 }
 
-_CallbackList.prototype.insert = function(callback, before)
+proto.insert = function(callback, before)
 {
 	var beforeNode = this._doFindNode(before);
 	if(! beforeNode) {
@@ -75,7 +79,7 @@ _CallbackList.prototype.insert = function(callback, before)
 	return node;
 }
 
-_CallbackList.prototype.remove = function(handle)
+proto.remove = function(handle)
 {
 	var node = this._doFindNode(handle);
 	if(! node) {
@@ -102,7 +106,7 @@ _CallbackList.prototype.remove = function(handle)
 	return true;
 }
 
-_CallbackList.prototype.dispatch = function()
+proto.dispatch = function()
 {
 	var counter = this._currentCounter;
 	var node = this._head;
@@ -114,7 +118,7 @@ _CallbackList.prototype.dispatch = function()
 	}
 }
 
-_CallbackList.prototype.forEach = function(func)
+proto.forEach = function(func)
 {
 	var node = this._head;
 	var counter = this._currentCounter;
@@ -126,7 +130,7 @@ _CallbackList.prototype.forEach = function(func)
 	}
 }
 
-_CallbackList.prototype.forEachIf = function(func)
+proto.forEachIf = function(func)
 {
 	var node = this._head;
 	var counter = this._currentCounter;
@@ -143,7 +147,7 @@ _CallbackList.prototype.forEachIf = function(func)
 	return true;
 }
 
-_CallbackList.prototype._doFindNode = function(handle)
+proto._doFindNode = function(handle)
 {
 	if(handle instanceof Node) {
 		return handle;
@@ -160,7 +164,7 @@ _CallbackList.prototype._doFindNode = function(handle)
 	return null;
 }
 
-_CallbackList.prototype._getNextCounter = function()
+proto._getNextCounter = function()
 {
 	var result = ++this._currentCounter;
 	if(result == 0) { // overflow, let's reset all nodes' counters.
@@ -175,7 +179,7 @@ _CallbackList.prototype._getNextCounter = function()
 	return result;
 }
 
-ns.CallbackList = _CallbackList;
+ns.CallbackList = CallbackList;
 
 if (typeof define === 'function' && define.amd) {
 	define(function () { return ns;	});

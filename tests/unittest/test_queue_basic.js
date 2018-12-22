@@ -262,5 +262,83 @@ describe('EventQueue', () => {
 			assert.ok(testutil.checkArraysEqual(dataList, [ 0, 0, 0 ]));
 		});
 	});
+	
+	it('clearEvents', () => {
+		let queue = new eventjs.EventQueue();
 
+		let a = 1;
+		let b = 5;
+
+		queue.appendListener(3, function() {
+			a += 1;
+		});
+		queue.appendListener(3, function() {
+			b += 3;
+		});
+
+		assert.strictEqual(a, 1);
+		assert.strictEqual(b, 5);
+
+		queue.enqueue(3);
+		queue.process()
+		
+		assert.strictEqual(a, 2);
+		assert.strictEqual(b, 8);
+
+		queue.enqueue(3);
+		queue.clearEvents()
+		queue.process()
+		
+		assert.strictEqual(a, 2);
+		assert.strictEqual(b, 8);
+	});
+
+	it('processIf', () => {
+		let queue = new eventjs.EventQueue();
+
+		let dataList = new Array(3);
+		dataList.fill(0);
+
+		queue.appendListener(5, function() {
+			++dataList[0];
+		});
+		queue.appendListener(6, function() {
+			++dataList[1];
+		});
+		queue.appendListener(7, function() {
+			++dataList[2];
+		});
+
+		assert.ok(testutil.checkArraysEqual(dataList, [ 0, 0, 0 ]));
+
+		queue.enqueue(5);
+		queue.enqueue(6);
+		queue.enqueue(7);
+		queue.process();
+		assert.ok(testutil.checkArraysEqual(dataList, [ 1, 1, 1 ]));
+
+		queue.enqueue(5);
+		queue.enqueue(6);
+		queue.enqueue(7);
+		queue.processIf(function(event) { return event.event === 6; });
+		assert.ok(testutil.checkArraysEqual(dataList, [ 1, 2, 1 ]));
+		// Now the queue contains 5, 7
+
+		queue.enqueue(5);
+		queue.enqueue(6);
+		queue.enqueue(7);
+		queue.processIf(function(event) { return event.event === 5; });
+		assert.ok(testutil.checkArraysEqual(dataList, [ 3, 2, 1 ]));
+		// Now the queue contains 6, 7, 7
+
+		queue.enqueue(5);
+		queue.enqueue(6);
+		queue.enqueue(7);
+		queue.processIf(function(event) { return event.event === 7; });
+		assert.ok(testutil.checkArraysEqual(dataList, [ 3, 2, 4 ]));
+		// Now the queue contains 5, 6, 6
+
+		queue.process();
+		assert.ok(testutil.checkArraysEqual(dataList, [ 4, 4, 4 ]));
+	});
 });

@@ -6,16 +6,18 @@ if(eventjs === undefined) { var eventjs = {}; }
 var eventdispatcher = ns;
 if(typeof require === 'function') { eventdispatcher = require('./eventdispatcher.js'); }
 
-function _EventQueue(params)
+function EventQueue(params)
 {
 	eventdispatcher.EventDispatcher.call(this, params);
 	
 	this._queueList = [];
 }
 
-_EventQueue.prototype = Object.create(eventdispatcher.EventDispatcher.prototype);
+EventQueue.prototype = Object.create(eventdispatcher.EventDispatcher.prototype);
 
-_EventQueue.prototype.enqueue = function()
+var proto = EventQueue.prototype;
+
+proto.enqueue = function()
 {
 	if(this._getEvent) {
 		var args = Array.prototype.slice.call(arguments, 0);
@@ -33,7 +35,7 @@ _EventQueue.prototype.enqueue = function()
 	}
 }
 
-_EventQueue.prototype.process = function()
+proto.process = function()
 {
 	var list = this._queueList;
 	this._queueList = [];
@@ -44,14 +46,14 @@ _EventQueue.prototype.process = function()
 	}
 }
 
-_EventQueue.prototype.processOne = function()
+proto.processOne = function()
 {
 	if(this._queueList.length > 0) {
 		this.dispatchQueuedEvent(this._queueList.shift());
 	}
 }
 
-_EventQueue.prototype.processIf = function(func)
+proto.processIf = function(func)
 {
 	var list = this._queueList;
 	this._queueList = [];
@@ -59,7 +61,7 @@ _EventQueue.prototype.processIf = function(func)
 	var unprocessedList = [];
 	
 	var count = list.length;
-	for(var i; i < count; ++i) {
+	for(var i = 0; i < count; ++i) {
 		var item = list[i];
 		if(func(item)) {
 			this.dispatchQueuedEvent(item);
@@ -74,22 +76,22 @@ _EventQueue.prototype.processIf = function(func)
 	}
 }
 
-_EventQueue.prototype.empty = function()
+proto.empty = function()
 {
 	return this._queueList.length === 0;
 }
 
-_EventQueue.prototype.clearEvents = function()
+proto.clearEvents = function()
 {
 	this._queueList.length = 0;
 }
 
-_EventQueue.prototype.peekEvent = function()
+proto.peekEvent = function()
 {
 	return this._queueList[0];
 }
 
-_EventQueue.prototype.takeEvent = function()
+proto.takeEvent = function()
 {
 	if(this._queueList.length > 0) {
 		return this._queueList.shift();
@@ -98,7 +100,7 @@ _EventQueue.prototype.takeEvent = function()
 	return null;
 }
 
-_EventQueue.prototype.dispatchQueuedEvent = function(item)
+proto.dispatchQueuedEvent = function(item)
 {
 	if(item) {
 		var cbList = this._doGetCallbackList(item.event, false);
@@ -108,7 +110,7 @@ _EventQueue.prototype.dispatchQueuedEvent = function(item)
 	}
 }
 
-ns.EventQueue = _EventQueue;
+ns.EventQueue = EventQueue;
 
 if (typeof define === 'function' && define.amd) {
 	define(function () { return ns;	});
