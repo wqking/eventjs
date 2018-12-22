@@ -52,9 +52,9 @@ CallbackList.prototype.prepend = function(callback)
 	return node;
 }
 
-CallbackList.prototype.insert = function(callback, beforeHandle)
+CallbackList.prototype.insert = function(callback, before)
 {
-	var beforeNode = this._doFindNode(beforeHandle);
+	var beforeNode = this._doFindNode(before);
 	if(! beforeNode) {
 		return this.append(callback);
 	}

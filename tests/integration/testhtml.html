@@ -1,13 +1,13 @@
 <html>
 
 <head>
-<script src="../../src/callbacklist.js"></script>
+<script src="../../dist/eventjs.min.js"></script>
 </head>
 
 <body>
 <script>
-	var callbackList = new eventjs.CallbackList();
-	callbackList.append(0);
+	var callbackList = new eventjs.EventDispatcher();
+	callbackList.appendListener(0, 5);
 </script>
 </body>
 
