@@ -6,9 +6,11 @@ if(eventjs === undefined) { var eventjs = {}; }
 var callbacklist = ns;
 if(typeof require === 'function') { callbacklist = require('./callbacklist.js'); }
 
-function EventDispatcher()
+function EventDispatcher(params)
 {
 	this._eventCallbackListMap = {};
+	params = params || {};
+	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
 }
 
 EventDispatcher.prototype.appendListener = function(event, callback)
@@ -36,11 +38,21 @@ EventDispatcher.prototype.removeListener = function(event, handle)
 	return false;
 }
 
-EventDispatcher.prototype.dispatch = function(event)
+EventDispatcher.prototype.dispatch = function()
 {
-	var cbList = this._doGetCallbackList(event, false);
-	if(cbList) {
-		//return cbList.remove(handle);
+	if(this._getEvent) {
+		var cbList = this._doGetCallbackList(this._getEvent.apply(this, arguments), false);
+		if(cbList) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			cbList.dispatch.apply(cbList, args);
+		}
+	}
+	else {
+		var cbList = this._doGetCallbackList(arguments[0], false);
+		if(cbList) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			cbList.dispatch.apply(cbList, args);
+		}
 	}
 }
 
