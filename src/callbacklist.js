@@ -117,6 +117,7 @@ CallbackList.prototype.dispatch = function()
 CallbackList.prototype.forEach = function(func)
 {
 	var node = this._head;
+	var counter = this._currentCounter;
 	while(node) {
 		if(node._counter != 0 && counter >= node._counter) {
 			func(node._callback);
@@ -128,15 +129,18 @@ CallbackList.prototype.forEach = function(func)
 CallbackList.prototype.forEachIf = function(func)
 {
 	var node = this._head;
+	var counter = this._currentCounter;
 	while(node) {
 		if(node._counter != 0 && counter >= node._counter) {
 			if(! func(node._callback)) {
-				break;
+				return false;
 			}
 		}
 
 		node = node._next;
 	}
+	
+	return true;
 }
 
 CallbackList.prototype._doFindNode = function(handle)
