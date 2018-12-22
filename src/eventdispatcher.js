@@ -6,29 +6,29 @@ if(eventjs === undefined) { var eventjs = {}; }
 var callbacklist = ns;
 if(typeof require === 'function') { callbacklist = require('./callbacklist.js'); }
 
-function EventDispatcher(params)
+function _EventDispatcher(params)
 {
 	this._eventCallbackListMap = {};
 	params = params || {};
 	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
 }
 
-EventDispatcher.prototype.appendListener = function(event, callback)
+_EventDispatcher.prototype.appendListener = function(event, callback)
 {
 	return this._doGetCallbackList(event, true).append(callback);
 }
 
-EventDispatcher.prototype.prependListener = function(event, callback)
+_EventDispatcher.prototype.prependListener = function(event, callback)
 {
 	return this._doGetCallbackList(event, true).prepend(callback);
 }
 
-EventDispatcher.prototype.insertListener = function(event, callback, before)
+_EventDispatcher.prototype.insertListener = function(event, callback, before)
 {
 	return this._doGetCallbackList(event, true).insert(callback, before);
 }
 
-EventDispatcher.prototype.removeListener = function(event, handle)
+_EventDispatcher.prototype.removeListener = function(event, handle)
 {
 	var cbList = this._doGetCallbackList(event, false);
 	if(cbList) {
@@ -38,12 +38,12 @@ EventDispatcher.prototype.removeListener = function(event, handle)
 	return false;
 }
 
-EventDispatcher.prototype.dispatch = function()
+_EventDispatcher.prototype.dispatch = function()
 {
 	if(this._getEvent) {
 		var cbList = this._doGetCallbackList(this._getEvent.apply(this, arguments), false);
 		if(cbList) {
-			var args = Array.prototype.slice.call(arguments, 1);
+			var args = Array.prototype.slice.call(arguments, 0);
 			cbList.dispatch.apply(cbList, args);
 		}
 	}
@@ -56,7 +56,7 @@ EventDispatcher.prototype.dispatch = function()
 	}
 }
 
-EventDispatcher.prototype._doGetCallbackList = function(event, createOnNotFound)
+_EventDispatcher.prototype._doGetCallbackList = function(event, createOnNotFound)
 {
 	if(this._eventCallbackListMap.hasOwnProperty(event)) {
 		return this._eventCallbackListMap[event];
@@ -71,7 +71,7 @@ EventDispatcher.prototype._doGetCallbackList = function(event, createOnNotFound)
 	return null;
 }
 
-ns.EventDispatcher = EventDispatcher;
+ns.EventDispatcher = _EventDispatcher;
 
 if (typeof define === 'function' && define.amd) {
 	define(function () { return ns;	});

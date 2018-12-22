@@ -11,14 +11,14 @@ function Node(callback, counter)
 	this._counter = counter;
 }
 
-function CallbackList()
+function _CallbackList()
 {
 	this._head = null;
 	this._tail = null;
 	this._currentCounter = 0;
 }
 
-CallbackList.prototype.append = function(callback)
+_CallbackList.prototype.append = function(callback)
 {
 	var node = new Node(callback, this._getNextCounter());
 
@@ -35,7 +35,7 @@ CallbackList.prototype.append = function(callback)
 	return node;
 }
 
-CallbackList.prototype.prepend = function(callback)
+_CallbackList.prototype.prepend = function(callback)
 {
 	var node = new Node(callback, this._getNextCounter());
 
@@ -52,7 +52,7 @@ CallbackList.prototype.prepend = function(callback)
 	return node;
 }
 
-CallbackList.prototype.insert = function(callback, before)
+_CallbackList.prototype.insert = function(callback, before)
 {
 	var beforeNode = this._doFindNode(before);
 	if(! beforeNode) {
@@ -75,7 +75,7 @@ CallbackList.prototype.insert = function(callback, before)
 	return node;
 }
 
-CallbackList.prototype.remove = function(handle)
+_CallbackList.prototype.remove = function(handle)
 {
 	var node = this._doFindNode(handle);
 	if(! node) {
@@ -102,7 +102,7 @@ CallbackList.prototype.remove = function(handle)
 	return true;
 }
 
-CallbackList.prototype.dispatch = function()
+_CallbackList.prototype.dispatch = function()
 {
 	var counter = this._currentCounter;
 	var node = this._head;
@@ -114,7 +114,7 @@ CallbackList.prototype.dispatch = function()
 	}
 }
 
-CallbackList.prototype.forEach = function(func)
+_CallbackList.prototype.forEach = function(func)
 {
 	var node = this._head;
 	var counter = this._currentCounter;
@@ -126,7 +126,7 @@ CallbackList.prototype.forEach = function(func)
 	}
 }
 
-CallbackList.prototype.forEachIf = function(func)
+_CallbackList.prototype.forEachIf = function(func)
 {
 	var node = this._head;
 	var counter = this._currentCounter;
@@ -143,7 +143,7 @@ CallbackList.prototype.forEachIf = function(func)
 	return true;
 }
 
-CallbackList.prototype._doFindNode = function(handle)
+_CallbackList.prototype._doFindNode = function(handle)
 {
 	if(handle instanceof Node) {
 		return handle;
@@ -160,7 +160,7 @@ CallbackList.prototype._doFindNode = function(handle)
 	return null;
 }
 
-CallbackList.prototype._getNextCounter = function()
+_CallbackList.prototype._getNextCounter = function()
 {
 	var result = ++this._currentCounter;
 	if(result == 0) { // overflow, let's reset all nodes' counters.
@@ -175,7 +175,7 @@ CallbackList.prototype._getNextCounter = function()
 	return result;
 }
 
-ns.CallbackList = CallbackList;
+ns.CallbackList = _CallbackList;
 
 if (typeof define === 'function' && define.amd) {
 	define(function () { return ns;	});
