@@ -12,11 +12,22 @@ function EventDispatcher(params)
 	params = params || {};
 	
 	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
-	this._argumentPassingMode = params.hasOwnProperty('argumentPassingMode') ? params.argumentPassingMode : EventDispatcher.argumentPassingExcludeEvent;
+	this._argumentPassingMode = params.hasOwnProperty('argumentPassingMode') ? params.argumentPassingMode : EventDispatcher._defaultArgumentPassingMode;
 }
 
 EventDispatcher.argumentPassingIncludeEvent = 1;
 EventDispatcher.argumentPassingExcludeEvent = 2;
+EventDispatcher._defaultArgumentPassingMode = 2;
+
+EventDispatcher.setDefaultArgumentPassingMode = function(value)
+{
+	EventDispatcher._defaultArgumentPassingMode = value;
+}
+
+EventDispatcher.getDefaultArgumentPassingMode = function()
+{
+	return EventDispatcher._defaultArgumentPassingMode;
+}
 
 var proto = EventDispatcher.prototype;
 

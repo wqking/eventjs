@@ -50,7 +50,7 @@ proto.processIf = function(func)
 	var count = list.length;
 	for(var i = 0; i < count; ++i) {
 		var item = list[i];
-		if(func(item)) {
+		if(func.apply(this, item)) {
 			this.applyDispatch(item);
 		}
 		else {

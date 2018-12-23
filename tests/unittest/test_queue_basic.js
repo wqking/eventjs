@@ -320,21 +320,21 @@ describe('EventQueue', () => {
 		queue.enqueue(5);
 		queue.enqueue(6);
 		queue.enqueue(7);
-		queue.processIf(function(event) { return event[0] === 6; });
+		queue.processIf(function(event) { return event === 6; });
 		assert.ok(testutil.checkArraysEqual(dataList, [ 1, 2, 1 ]));
 		// Now the queue contains 5, 7
 
 		queue.enqueue(5);
 		queue.enqueue(6);
 		queue.enqueue(7);
-		queue.processIf(function(event) { return event[0] === 5; });
+		queue.processIf(function(event) { return event === 5; });
 		assert.ok(testutil.checkArraysEqual(dataList, [ 3, 2, 1 ]));
 		// Now the queue contains 6, 7, 7
 
 		queue.enqueue(5);
 		queue.enqueue(6);
 		queue.enqueue(7);
-		queue.processIf(function(event) { return event[0] === 7; });
+		queue.processIf(function(event) { return event === 7; });
 		assert.ok(testutil.checkArraysEqual(dataList, [ 3, 2, 4 ]));
 		// Now the queue contains 5, 6, 6
 
