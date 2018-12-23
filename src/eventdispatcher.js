@@ -40,6 +40,26 @@ proto.removeListener = function(event, handle)
 	return false;
 }
 
+proto.hasListener = function(event, handle)
+{
+	var cbList = this._doGetCallbackList(event, false);
+	if(cbList) {
+		return cbList.has(handle);
+	}
+	
+	return false;
+}
+
+proto.hasAnyListener = function(event)
+{
+	var cbList = this._doGetCallbackList(event, false);
+	if(cbList) {
+		return cbList.hasAny();
+	}
+	
+	return false;
+}
+
 proto.dispatch = function()
 {
 	if(this._getEvent) {

@@ -106,6 +106,16 @@ proto.remove = function(handle)
 	return true;
 }
 
+proto.has = function(handle)
+{
+	return !! this._doFindNode(handle);
+}
+
+proto.hasAny = function()
+{
+	return !! this._head;
+}
+
 proto.dispatch = function()
 {
 	var counter = this._currentCounter;
@@ -149,13 +159,9 @@ proto.forEachIf = function(func)
 
 proto._doFindNode = function(handle)
 {
-	if(handle instanceof Node) {
-		return handle;
-	}
-
 	var node = this._head;
 	while(node) {
-		if(node._callback === handle) {
+		if(node === handle || node._callback === handle) {
 			return node;
 		}
 		node = node._next;

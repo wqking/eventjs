@@ -334,4 +334,56 @@ describe('CallbackList', () => {
 		});
 	});
 
+	it('has', () => {
+		let callbackList = new eventjs.CallbackList();
+		let h100, h101;
+	
+		assert.ok(! callbackList.has(100));
+		assert.ok(! callbackList.has(h100));
+		assert.ok(! callbackList.has(101));
+		assert.ok(! callbackList.has(h101));
+		
+		h100 = callbackList.append(100);
+		assert.ok(callbackList.has(100));
+		assert.ok(callbackList.has(h100));
+		assert.ok(! callbackList.has(101));
+		assert.ok(! callbackList.has(h101));
+		
+		h101 = callbackList.append(101);
+		assert.ok(callbackList.has(100));
+		assert.ok(callbackList.has(h100));
+		assert.ok(callbackList.has(101));
+		assert.ok(callbackList.has(h101));
+		
+		callbackList.remove(100);
+		assert.ok(! callbackList.has(100));
+		assert.ok(! callbackList.has(h100));
+		assert.ok(callbackList.has(101));
+		assert.ok(callbackList.has(h101));
+		
+		callbackList.remove(h101);
+		assert.ok(! callbackList.has(100));
+		assert.ok(! callbackList.has(h100));
+		assert.ok(! callbackList.has(101));
+		assert.ok(! callbackList.has(h101));
+	});
+
+	it('hasAny', () => {
+		let callbackList = new eventjs.CallbackList();
+
+		assert.ok(! callbackList.hasAny());
+	
+		callbackList.append(100);
+		assert.ok(callbackList.hasAny());
+		
+		callbackList.append(101);
+		assert.ok(callbackList.hasAny());
+		
+		callbackList.remove(100);
+		assert.ok(callbackList.hasAny());
+		
+		callbackList.remove(101);
+		assert.ok(! callbackList.hasAny());
+	});
+
 });

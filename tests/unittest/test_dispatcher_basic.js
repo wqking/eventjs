@@ -178,4 +178,50 @@ describe('EventDispatcher', () => {
 		assert.strictEqual(iList[1], 8);
 	});
 	
+	it('hasListener', () => {
+		let dispatcher = new eventjs.EventDispatcher();
+		
+		assert.ok(! dispatcher.hasListener(3, 103));
+		assert.ok(! dispatcher.hasListener(5, 105));
+
+		dispatcher.appendListener(3, 103);
+		assert.ok(dispatcher.hasListener(3, 103));
+		assert.ok(! dispatcher.hasListener(5, 105));
+
+		dispatcher.appendListener(5, 105);
+		assert.ok(dispatcher.hasListener(3, 103));
+		assert.ok(dispatcher.hasListener(5, 105));
+
+		dispatcher.removeListener(3, 103);
+		assert.ok(! dispatcher.hasListener(3, 103));
+		assert.ok(dispatcher.hasListener(5, 105));
+
+		dispatcher.removeListener(5, 105);
+		assert.ok(! dispatcher.hasListener(3, 103));
+		assert.ok(! dispatcher.hasListener(5, 105));
+	});
+
+	it('hasAnyListener', () => {
+		let dispatcher = new eventjs.EventDispatcher();
+		
+		assert.ok(! dispatcher.hasAnyListener(3));
+		assert.ok(! dispatcher.hasAnyListener(5));
+
+		dispatcher.appendListener(3, 103);
+		assert.ok(dispatcher.hasAnyListener(3));
+		assert.ok(! dispatcher.hasAnyListener(5));
+
+		dispatcher.appendListener(5, 105);
+		assert.ok(dispatcher.hasAnyListener(3));
+		assert.ok(dispatcher.hasAnyListener(5));
+
+		dispatcher.removeListener(3, 103);
+		assert.ok(! dispatcher.hasAnyListener(3));
+		assert.ok(dispatcher.hasAnyListener(5));
+
+		dispatcher.removeListener(5, 105);
+		assert.ok(! dispatcher.hasAnyListener(3));
+		assert.ok(! dispatcher.hasAnyListener(5));
+	});
+
 });
