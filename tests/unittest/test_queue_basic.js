@@ -136,7 +136,7 @@ describe('EventQueue', () => {
 		assert.strictEqual(b, "World very good38");
 	});
 
-	context('peekEvent/takeEvent/dispatchQueuedEvent', () => {
+	context('peekEvent/takeEvent/applyDispatch', () => {
 		let queue;
 		const itemCount = 3;
 		let dataList;
@@ -164,8 +164,8 @@ describe('EventQueue', () => {
 
 			let event = queue.peekEvent();
 			assert.ok(event);
-			assert.strictEqual(event.event, 3);
-			assert.strictEqual(event.arguments[0], 0);
+			assert.strictEqual(event[0], 3);
+			assert.strictEqual(event[1], 0);
 		});
 
 		it("peek/peek", () => {
@@ -173,13 +173,13 @@ describe('EventQueue', () => {
 
 			let event = queue.peekEvent();
 			assert.ok(event);
-			assert.strictEqual(event.event, 3);
-			assert.strictEqual(event.arguments[0], 0);
+			assert.strictEqual(event[0], 3);
+			assert.strictEqual(event[1], 0);
 
 			let event2 = queue.peekEvent();
 			assert.ok(event2);
-			assert.strictEqual(event2.event, 3);
-			assert.strictEqual(event2.arguments[0], 0);
+			assert.strictEqual(event2[0], 3);
+			assert.strictEqual(event2[1], 0);
 		});
 
 		it("peek/take", () => {
@@ -187,13 +187,13 @@ describe('EventQueue', () => {
 
 			let event = queue.peekEvent();
 			assert.ok(event);
-			assert.strictEqual(event.event, 3);
-			assert.strictEqual(event.arguments[0], 0);
+			assert.strictEqual(event[0], 3);
+			assert.strictEqual(event[1], 0);
 
 			let event2 = queue.takeEvent();
 			assert.ok(event2);
-			assert.strictEqual(event2.event, 3);
-			assert.strictEqual(event2.arguments[0], 0);
+			assert.strictEqual(event2[0], 3);
+			assert.strictEqual(event2[1], 0);
 		});
 
 		it("peek/take/peek", () => {
@@ -201,18 +201,18 @@ describe('EventQueue', () => {
 
 			let event = queue.peekEvent();
 			assert.ok(event);
-			assert.strictEqual(event.event, 3);
-			assert.strictEqual(event.arguments[0], 0);
+			assert.strictEqual(event[0], 3);
+			assert.strictEqual(event[1], 0);
 
 			let event2 = queue.takeEvent();
 			assert.ok(event2);
-			assert.strictEqual(event2.event, 3);
-			assert.strictEqual(event2.arguments[0], 0);
+			assert.strictEqual(event2[0], 3);
+			assert.strictEqual(event2[1], 0);
 
 			let event3 = queue.peekEvent();
 			assert.ok(event3);
-			assert.strictEqual(event3.event, 3);
-			assert.strictEqual(event3.arguments[0], 1);
+			assert.strictEqual(event3[0], 3);
+			assert.strictEqual(event3[1], 1);
 		});
 
 		it("peek/dispatch/peek/dispatch again", () => {
@@ -220,19 +220,19 @@ describe('EventQueue', () => {
 
 			let event = queue.peekEvent();
 			assert.ok(event);
-			assert.strictEqual(event.event, 3);
-			assert.strictEqual(event.arguments[0], 0);
+			assert.strictEqual(event[0], 3);
+			assert.strictEqual(event[1], 0);
 
-			queue.dispatchQueuedEvent(event);
+			queue.applyDispatch(event);
 
 			let event2 = queue.takeEvent();
 			assert.ok(event2);
-			assert.strictEqual(event2.event, 3);
-			assert.strictEqual(event2.arguments[0], 0);
+			assert.strictEqual(event2[0], 3);
+			assert.strictEqual(event2[1], 0);
 			
 			assert.ok(testutil.checkArraysEqual(dataList, [ 1, 0, 0 ]));
 
-			queue.dispatchQueuedEvent(event);
+			queue.applyDispatch(event);
 
 			assert.ok(testutil.checkArraysEqual(dataList, [ 2, 0, 0 ]));
 		});
@@ -320,21 +320,21 @@ describe('EventQueue', () => {
 		queue.enqueue(5);
 		queue.enqueue(6);
 		queue.enqueue(7);
-		queue.processIf(function(event) { return event.event === 6; });
+		queue.processIf(function(event) { return event[0] === 6; });
 		assert.ok(testutil.checkArraysEqual(dataList, [ 1, 2, 1 ]));
 		// Now the queue contains 5, 7
 
 		queue.enqueue(5);
 		queue.enqueue(6);
 		queue.enqueue(7);
-		queue.processIf(function(event) { return event.event === 5; });
+		queue.processIf(function(event) { return event[0] === 5; });
 		assert.ok(testutil.checkArraysEqual(dataList, [ 3, 2, 1 ]));
 		// Now the queue contains 6, 7, 7
 
 		queue.enqueue(5);
 		queue.enqueue(6);
 		queue.enqueue(7);
-		queue.processIf(function(event) { return event.event === 7; });
+		queue.processIf(function(event) { return event[0] === 7; });
 		assert.ok(testutil.checkArraysEqual(dataList, [ 3, 2, 4 ]));
 		// Now the queue contains 5, 6, 6
 

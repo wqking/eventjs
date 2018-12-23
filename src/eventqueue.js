@@ -19,20 +19,7 @@ var proto = EventQueue.prototype;
 
 proto.enqueue = function()
 {
-	if(this._getEvent) {
-		var args = Array.prototype.slice.call(arguments, 0);
-		this._queueList.push({
-			event: this._getEvent.apply(this, arguments),
-			arguments: args
-		});
-	}
-	else {
-		var args = Array.prototype.slice.call(arguments, 1);
-		this._queueList.push({
-			event: arguments[0],
-			arguments: args
-		});
-	}
+	this._queueList.push(Array.prototype.slice.call(arguments, 0));
 }
 
 proto.process = function()
@@ -42,14 +29,14 @@ proto.process = function()
 	
 	var count = list.length;
 	for(var i = 0; i < count; ++i) {
-		this.dispatchQueuedEvent(list[i]);
+		this.applyDispatch(list[i]);
 	}
 }
 
 proto.processOne = function()
 {
 	if(this._queueList.length > 0) {
-		this.dispatchQueuedEvent(this._queueList.shift());
+		this.applyDispatch(this._queueList.shift());
 	}
 }
 
@@ -64,7 +51,7 @@ proto.processIf = function(func)
 	for(var i = 0; i < count; ++i) {
 		var item = list[i];
 		if(func(item)) {
-			this.dispatchQueuedEvent(item);
+			this.applyDispatch(item);
 		}
 		else {
 			unprocessedList.push(item);
@@ -98,16 +85,6 @@ proto.takeEvent = function()
 	}
 	
 	return null;
-}
-
-proto.dispatchQueuedEvent = function(item)
-{
-	if(item) {
-		var cbList = this._doGetCallbackList(item.event, false);
-		if(cbList) {
-			cbList.dispatch.apply(cbList, item.arguments);
-		}
-	}
 }
 
 ns.EventQueue = EventQueue;

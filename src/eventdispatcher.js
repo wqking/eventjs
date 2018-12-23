@@ -10,8 +10,13 @@ function EventDispatcher(params)
 {
 	this._eventCallbackListMap = {};
 	params = params || {};
+	
 	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
+	this._argumentPassingMode = params.hasOwnProperty('argumentPassingMode') ? params.argumentPassingMode : EventDispatcher.argumentPassingExcludeEvent;
 }
+
+EventDispatcher.argumentPassingIncludeEvent = 1;
+EventDispatcher.argumentPassingExcludeEvent = 2;
 
 var proto = EventDispatcher.prototype;
 
@@ -62,17 +67,28 @@ proto.hasAnyListener = function(event)
 
 proto.dispatch = function()
 {
+	this.applyDispatch(arguments);
+}
+
+proto.applyDispatch = function(args)
+{
 	if(this._getEvent) {
-		var cbList = this._doGetCallbackList(this._getEvent.apply(this, arguments), false);
+		var event = this._getEvent.apply(this, args);
+		var cbList = this._doGetCallbackList(event, false);
 		if(cbList) {
-			var args = Array.prototype.slice.call(arguments, 0);
+			if(this._argumentPassingMode === EventDispatcher.argumentPassingIncludeEvent) {
+				args = [ event ].concat(args);
+			}
 			cbList.dispatch.apply(cbList, args);
 		}
 	}
 	else {
-		var cbList = this._doGetCallbackList(arguments[0], false);
+		var cbList = this._doGetCallbackList(args[0], false);
 		if(cbList) {
-			var args = Array.prototype.slice.call(arguments, 1);
+			var args;
+			if(this._argumentPassingMode === EventDispatcher.argumentPassingExcludeEvent) {
+				args = Array.prototype.slice.call(args, 1);
+			}
 			cbList.dispatch.apply(cbList, args);
 		}
 	}
