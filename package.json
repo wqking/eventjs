@@ -5,7 +5,7 @@
     "main": "dist/eventjs.js",
     "module": "dist/eventjs.m.js",
     "scripts": {
-        "build": "uglifyjs --comments --mangle --compress --output dist/eventjs.min.js src/callbacklist.js src/eventdispatcher.js src/mixins/mixinfilter.js && perl tools/minifymore.pl dist/eventjs.min.js",
+        "build": "sh build.sh",
         "test": "mocha tests/unittest/*.js",
         "prepublish": "npm test"
     },
