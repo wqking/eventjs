@@ -3,17 +3,14 @@ if(eventjs === undefined) { var eventjs = {}; }
 ;(function(ns) {
 'use strict';
 
-var _eventdispatcher = ns;
-if(typeof require === 'function') { _eventdispatcher = require('./eventdispatcher.js'); }
-
 function EventQueue(params)
 {
-	_eventdispatcher.EventDispatcher.call(this, params);
+	ns.EventDispatcher.call(this, params);
 	
 	this._queueList = [];
 }
 
-EventQueue.prototype = Object.create(_eventdispatcher.EventDispatcher.prototype);
+EventQueue.prototype = Object.create(ns.EventDispatcher.prototype);
 
 var proto = EventQueue.prototype;
 

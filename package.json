@@ -1,44 +1,45 @@
 {
-    "name": "eventjs",
-    "version": "0.0.1",
-    "description": "eventjs is a JavaScript event library that provides tools that enable your application components to communicate with each other by dispatching events and listening for them. With eventpp you can easily implement signal/slot mechanism, or observer pattern.",
-    "main": "dist/eventjs.js",
-    "module": "dist/eventjs.m.js",
-    "scripts": {
-        "build": "sh build.sh",
-        "test": "mocha tests/unittest/*.js",
-        "prepublish": "npm test"
-    },
-    "keywords": [
-        "modules",
-        "eventjs",
-        "event",
-        "dispatcher",
-        "listener",
-        "callback",
-        "callbacklist"
-    ],
-    "author": "Wang Qi",
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/wqking/eventjs/issues"
-    },
-    "homepage": "https://github.com/wqking/eventjs",
-    "files": [
-        "src",
-        "dist"
-    ],
-    "directories": {
-        "doc": "docs",
-        "test": "tests/unittest"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/wqking/eventjs.git"
-    },
-    "readmeFilename": "readme.md",
-    "devDependencies": {
-        "mocha": "^5.2.0",
-        "uglify-js": "^3.4.9"
-    }
+  "name": "wqking-eventjs",
+  "version": "0.0.1",
+  "description": "eventjs is a JavaScript event library that provides tools that enable your application components to communicate with each other by dispatching events and listening for them. With eventpp you can easily implement signal/slot mechanism, or observer pattern.",
+  "main": "dist/eventjs.js",
+  "module": "dist/eventjs.min.js",
+  "scripts": {
+    "build": "sh build.sh",
+    "pretest": "uglifyjs --beautify --comments --output dist/eventjs.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js",
+    "test": "mocha tests/unittest/*.js",
+    "prepublish": "npm test"
+  },
+  "keywords": [
+    "modules",
+    "eventjs",
+    "event",
+    "dispatcher",
+    "listener",
+    "callback",
+    "callbacklist"
+  ],
+  "author": "Wang Qi",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/wqking/eventjs/issues"
+  },
+  "homepage": "https://github.com/wqking/eventjs",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "directories": {
+    "doc": "docs",
+    "test": "tests/unittest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wqking/eventjs.git"
+  },
+  "readmeFilename": "readme.md",
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "uglify-js": "^3.4.9"
+  }
 }

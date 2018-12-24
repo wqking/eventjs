@@ -3,9 +3,6 @@ if(eventjs === undefined) { var eventjs = {}; }
 ;(function(ns) {
 'use strict';
 
-var _callbacklist = ns;
-if(typeof require === 'function') { _callbacklist = require('./callbacklist.js'); }
-
 function _extend(destination, source)
 {
 	for(var k in source) {
@@ -142,7 +139,7 @@ proto._doGetCallbackList = function(event, createOnNotFound)
 	}
 	
 	if(createOnNotFound) {
-		var cbList = new _callbacklist.CallbackList(this._params);
+		var cbList = new ns.CallbackList(this._params);
 		this._eventCallbackListMap[event] = cbList;
 		return cbList;
 	}

@@ -4,7 +4,6 @@ if(eventjs === undefined) { var eventjs = {}; }
 'use strict';
 
 var _callbacklist = ns;
-if(typeof require === 'function') { _callbacklist = require('../callbacklist.js'); }
 
 function MixinFilter(params)
 {

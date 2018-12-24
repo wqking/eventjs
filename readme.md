@@ -33,7 +33,7 @@ Apache License, Version 2.0
 
 #### Install with NPM
 
-npm install --save wq-eventjs
+npm install --save wqking-eventjs
 
 In code,
 

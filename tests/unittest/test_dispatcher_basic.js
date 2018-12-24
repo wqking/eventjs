@@ -1,7 +1,7 @@
 let assert = require('assert');
-let eventjs = require('../../src/eventdispatcher.js');
+let eventjs = require('../../dist/eventjs.js');
+//let eventjs = require('wqking-eventjs');
 let testutil = require('./testutil.js');
-let mixinfilter = require('../../src/mixins/mixinfilter.js');
 
 describe('EventDispatcher', () => {
 	it('string event', () => {
@@ -239,7 +239,7 @@ describe('EventDispatcher', () => {
 			filterData.fill(0);
 
 			dispatcher = new eventjs.EventDispatcher({
-				mixins: [ new mixinfilter.MixinFilter() ],
+				mixins: [ new eventjs.MixinFilter() ],
 				argumentPassingMode: eventjs.EventDispatcher.argumentPassingIncludeEvent
 			});
 

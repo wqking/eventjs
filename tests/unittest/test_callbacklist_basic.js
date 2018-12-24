@@ -1,5 +1,5 @@
 let assert = require('assert');
-let eventjs = require('../../src/callbacklist.js');
+let eventjs = require('../../dist/eventjs.js');
 let testutil = require('./testutil.js');
 
 describe('CallbackList', () => {
