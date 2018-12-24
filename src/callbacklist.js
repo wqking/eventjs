@@ -13,11 +13,23 @@ function Node(callback, counter)
 	this._counter = counter;
 }
 
-function CallbackList()
+function CallbackList(params)
 {
 	this._head = null;
 	this._tail = null;
 	this._currentCounter = 0;
+
+	params = params || {};
+	this._canContinueInvoking = params.hasOwnProperty('canContinueInvoking') ? !! params.canContinueInvoking : null;
+	this._argumentsAsArray = params.hasOwnProperty('argumentsAsArray') ? !! params.argumentsAsArray : false;
+	if(this._argumentsAsArray) {
+		this.dispatch = this._dispatchArgumentsAsArray;
+		this.applyDispatch = this._applyDispatchArgumentsAsArray;
+	}
+	else {
+		this.dispatch = this._dispatchNotArgumentsAsArray;
+		this.applyDispatch = this._applyDispatchNotArgumentsAsArray;
+	}
 }
 
 var proto = CallbackList.prototype;
@@ -106,6 +118,11 @@ proto.remove = function(handle)
 	return true;
 }
 
+proto.empty = function()
+{
+	return ! this._head;
+}
+
 proto.has = function(handle)
 {
 	return !! this._doFindNode(handle);
@@ -116,13 +133,62 @@ proto.hasAny = function()
 	return !! this._head;
 }
 
-proto.dispatch = function()
+// duplicated code for performance reason
+proto._dispatchArgumentsAsArray = function()
+{
+	var counter = this._currentCounter;
+	var node = this._head;
+	while(node) {
+		if(node._counter != 0 && counter >= node._counter) {
+			node._callback.call(this, arguments);
+			if(this._canContinueInvoking && ! this._canContinueInvoking.call(this, arguments)) {
+				break;
+			}
+		}
+		node = node._next;
+	}
+}
+
+proto._dispatchNotArgumentsAsArray = function()
 {
 	var counter = this._currentCounter;
 	var node = this._head;
 	while(node) {
 		if(node._counter != 0 && counter >= node._counter) {
 			node._callback.apply(this, arguments);
+			if(this._canContinueInvoking && ! this._canContinueInvoking.apply(this, arguments)) {
+				break;
+			}
+		}
+		node = node._next;
+	}
+}
+
+proto._applyDispatchArgumentsAsArray = function(args)
+{
+	var counter = this._currentCounter;
+	var node = this._head;
+	while(node) {
+		if(node._counter != 0 && counter >= node._counter) {
+			node._callback.call(this, args);
+			if(this._canContinueInvoking && ! this._canContinueInvoking.call(this, args)) {
+				break;
+			}
+		}
+		node = node._next;
+	}
+}
+
+proto._applyDispatchNotArgumentsAsArray = function(args)
+{
+	var counter = this._currentCounter;
+	var node = this._head;
+	while(node) {
+		if(node._counter != 0 && counter >= node._counter) {
+			node._callback.apply(this, args);
+			if(this._canContinueInvoking && ! this._canContinueInvoking.apply(this, args)) {
+				break;
+			}
 		}
 		node = node._next;
 	}

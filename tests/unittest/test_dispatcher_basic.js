@@ -1,5 +1,7 @@
 let assert = require('assert');
 let eventjs = require('../../src/eventdispatcher.js');
+let testutil = require('./testutil.js');
+let mixinfilter = require('../../src/mixins/mixinfilter.js');
 
 describe('EventDispatcher', () => {
 	it('string event', () => {
@@ -222,6 +224,121 @@ describe('EventDispatcher', () => {
 		dispatcher.removeListener(5, 105);
 		assert.ok(! dispatcher.hasAnyListener(3));
 		assert.ok(! dispatcher.hasAnyListener(5));
+	});
+
+	context('event filter', () => {
+		let dispatcher;
+
+		const itemCount = 5;
+		const filterCount = 2;
+		let dataList = new Array(itemCount);
+		let filterData = new Array(filterCount);
+		
+		let reset = function() {
+			dataList.fill(0);
+			filterData.fill(0);
+
+			dispatcher = new eventjs.EventDispatcher({
+				mixins: [ new mixinfilter.MixinFilter() ],
+				argumentPassingMode: eventjs.EventDispatcher.argumentPassingIncludeEvent
+			});
+
+			for(let i = 0; i < itemCount; ++i) {
+				dispatcher.appendListener(i, function(e, index) {
+					dataList[e] = index;
+				});
+			}
+		}
+
+		it("Filter invoked count", () => {
+			reset();
+
+			dispatcher.appendFilter(function() {
+				++filterData[0];
+				return true;
+			});
+			dispatcher.appendFilter(function() {
+				++filterData[1];
+				return true;
+			});
+
+			for(let i = 0; i < itemCount; ++i) {
+				dispatcher.dispatch(i, 58);
+			}
+
+			assert.ok(testutil.checkArraysEqual(filterData, [ itemCount, itemCount ]));
+			assert.ok(testutil.checkArraysEqual(dataList, [ 58, 58, 58, 58, 58 ]));
+		});
+
+		it("First filter blocks all other filters and listeners", () => {
+			reset();
+
+			dispatcher.appendFilter(function(args) {
+				++filterData[0];
+				if(args[0] >= 2) {
+					return false;
+				}
+				return true;
+			});
+			dispatcher.appendFilter(function() {
+				++filterData[1];
+				return true;
+			});
+
+			for(let i = 0; i < itemCount; ++i) {
+				dispatcher.dispatch(i, 58);
+			}
+
+			assert.ok(testutil.checkArraysEqual(filterData, [ itemCount, 2 ]));
+			assert.ok(testutil.checkArraysEqual(dataList, [ 58, 58, 0, 0, 0 ]));
+		});
+
+		it("Second filter doesn't block first filter but all listeners", () => {
+			reset();
+
+			dispatcher.appendFilter(function() {
+				++filterData[0];
+				return true;
+			});
+			dispatcher.appendFilter(function(args) {
+				++filterData[1];
+				if(args[0] >= 2) {
+					return false;
+				}
+				return true;
+			});
+
+			for(let i = 0; i < itemCount; ++i) {
+				dispatcher.dispatch(i, 58);
+			}
+
+			assert.ok(testutil.checkArraysEqual(filterData, [ itemCount, itemCount ]));
+			assert.ok(testutil.checkArraysEqual(dataList, [ 58, 58, 0, 0, 0 ]));
+		});
+
+		it("Filter manipulates the parameters", () => {
+			reset();
+
+			dispatcher.appendFilter(function(args) {
+				++filterData[0];
+				if(args[0] >= 2) {
+					++args[1];
+				}
+				return true;
+			});
+			dispatcher.appendFilter(function() {
+				++filterData[1];
+				return true;
+			});
+
+			for(let i = 0; i < itemCount; ++i) {
+				dispatcher.dispatch(i, 58);
+			}
+
+			assert.ok(testutil.checkArraysEqual(filterData, [ itemCount, itemCount ]));
+			assert.ok(testutil.checkArraysEqual(dataList, [ 58, 58, 59, 59, 59 ]));
+		});
+
 	});
 
 });

@@ -3,17 +3,17 @@ if(eventjs === undefined) { var eventjs = {}; }
 ;(function(ns) {
 'use strict';
 
-var eventdispatcher = ns;
-if(typeof require === 'function') { eventdispatcher = require('./eventdispatcher.js'); }
+var _eventdispatcher = ns;
+if(typeof require === 'function') { _eventdispatcher = require('./eventdispatcher.js'); }
 
 function EventQueue(params)
 {
-	eventdispatcher.EventDispatcher.call(this, params);
+	_eventdispatcher.EventDispatcher.call(this, params);
 	
 	this._queueList = [];
 }
 
-EventQueue.prototype = Object.create(eventdispatcher.EventDispatcher.prototype);
+EventQueue.prototype = Object.create(_eventdispatcher.EventDispatcher.prototype);
 
 var proto = EventQueue.prototype;
 
@@ -50,7 +50,13 @@ proto.processIf = function(func)
 	var count = list.length;
 	for(var i = 0; i < count; ++i) {
 		var item = list[i];
-		if(func.apply(this, item)) {
+		if(this._argumentsAsArray) {
+			var ok = func.call(this, item);
+		}
+		else {
+			var ok = func.apply(this, item);
+		}
+		if(ok) {
 			this.applyDispatch(item);
 		}
 		else {

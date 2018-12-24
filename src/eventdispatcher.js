@@ -3,16 +3,33 @@ if(eventjs === undefined) { var eventjs = {}; }
 ;(function(ns) {
 'use strict';
 
-var callbacklist = ns;
-if(typeof require === 'function') { callbacklist = require('./callbacklist.js'); }
+var _callbacklist = ns;
+if(typeof require === 'function') { _callbacklist = require('./callbacklist.js'); }
+
+function _extend(destination, source)
+{
+	for(var k in source) {
+		destination[k] = source[k];
+	}
+	return destination;
+}
 
 function EventDispatcher(params)
 {
 	this._eventCallbackListMap = {};
+
 	params = params || {};
-	
+	this._params = params;
 	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
 	this._argumentPassingMode = params.hasOwnProperty('argumentPassingMode') ? params.argumentPassingMode : EventDispatcher._defaultArgumentPassingMode;
+	this._argumentsAsArray = params.hasOwnProperty('argumentsAsArray') ? !! params.argumentsAsArray : false;
+	this._mixins = params.mixins;
+	this._hasMixins = this._mixins && this._mixins.length > 0;
+	if(this._hasMixins) {
+		for(var i = 0; i < this._mixins.length; ++i) {
+			_extend(this, this._mixins[i]);
+		}
+	}
 }
 
 EventDispatcher.argumentPassingIncludeEvent = 1;
@@ -83,8 +100,22 @@ proto.dispatch = function()
 
 proto.applyDispatch = function(args)
 {
+	if(this._hasMixins) {
+		for(var i = 0; i < this._mixins.length; ++i) {
+			var mixin = this._mixins[i];
+			if(mixin.mixinBeforeDispatch && ! mixin.mixinBeforeDispatch.call(this, args)) {
+				return;
+			}
+		}
+	}
+
 	if(this._getEvent) {
-		var event = this._getEvent.apply(this, args);
+		if(this._argumentsAsArray) {
+			var event = this._getEvent.call(this, args);
+		}
+		else {
+			var event = this._getEvent.apply(this, args);
+		}
 		var cbList = this._doGetCallbackList(event, false);
 		if(cbList) {
 			if(this._argumentPassingMode === EventDispatcher.argumentPassingIncludeEvent) {
@@ -96,7 +127,6 @@ proto.applyDispatch = function(args)
 	else {
 		var cbList = this._doGetCallbackList(args[0], false);
 		if(cbList) {
-			var args;
 			if(this._argumentPassingMode === EventDispatcher.argumentPassingExcludeEvent) {
 				args = Array.prototype.slice.call(args, 1);
 			}
@@ -112,7 +142,7 @@ proto._doGetCallbackList = function(event, createOnNotFound)
 	}
 	
 	if(createOnNotFound) {
-		var cbList = new callbacklist.CallbackList();
+		var cbList = new _callbacklist.CallbackList(this._params);
 		this._eventCallbackListMap[event] = cbList;
 		return cbList;
 	}
