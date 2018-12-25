@@ -1,6 +1,15 @@
-/*eventjs v0.0.1, by wqking, https://github.com/wqking/eventjs, @preserve*/
-
-if(eventjs === undefined) { var eventjs = {}; }
+// eventjs library
+// Copyright (C) 2019 Wang Qi (wqking)
+// Github: https://github.com/wqking/eventjs
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 ;(function(ns) {
 'use strict';
@@ -20,7 +29,7 @@ function CallbackList(params)
 	this._currentCounter = 0;
 
 	params = params || {};
-	this._canContinueInvoking = params.hasOwnProperty('canContinueInvoking') ? !! params.canContinueInvoking : null;
+	this._canContinueInvoking = params.hasOwnProperty('canContinueInvoking') ? params.canContinueInvoking : null;
 	this._argumentsAsArray = params.hasOwnProperty('argumentsAsArray') ? !! params.argumentsAsArray : false;
 	if(this._argumentsAsArray) {
 		this.dispatch = this._dispatchArgumentsAsArray;
@@ -245,21 +254,12 @@ proto._getNextCounter = function()
 			node._counter = 1;
 			node = node._next;
 		}
-		result = ++currentCounter;
+		result = ++this._currentCounter;
 	}
 
 	return result;
 }
 
 ns.CallbackList = CallbackList;
-
-if (typeof define === 'function' && define.amd) {
-	define(function () { return ns;	});
-}
-else if (typeof module === 'object' && module.exports){
-	module.exports = ns;
-}
-else {
-}
 
 })(eventjs);

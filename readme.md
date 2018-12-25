@@ -33,63 +33,69 @@ Apache License, Version 2.0
 
 #### Install with NPM
 
+```
 npm install --save wqking-eventjs
-
-In code,
-
-```javascript
 ```
 
-### Namespace
+Import the module,
 
-`eventjs`
+```javascript
+let eventjs = require('wqking-eventjs');
+```
+
+#### Or link to the source code directly
+
+```html
+<script src="dist/eventjs.min.js"></script>
+```
+
+`eventjs` is available and no need to import.
 
 ### Using CallbackList
-```c++
-#include "eventjs/callbacklist.h"
-eventjs::CallbackList<void (const std::string &, const bool)> callbackList;
-callbackList.append([](const std::string & s, const bool b) {
-	std::cout << std::boolalpha << "Got callback 1, s is " << s << " b is " << b << std::endl;
+```javascript
+let callbackList = new eventjs.CallbackList();
+callbackList.append(function() {
+	console.log("Got callback 1.");
 });
-callbackList.append([](std::string s, int b) {
-	std::cout << std::boolalpha << "Got callback 2, s is " << s << " b is " << b << std::endl;
+callbackList.append(() => {
+	console.log("Got callback 2.");
 });
-callbackList("Hello world", true);
+callbackList.dispatch();
 ```
 
 ### Using EventDispatcher
-```c++
-#include "eventjs/eventdispatcher.h"
-eventjs::EventDispatcher<int, void ()> dispatcher;
-dispatcher.appendListener(3, []() {
-	std::cout << "Got event 3." << std::endl;
+```javascript
+let dispatcher = new eventjs.EventDispatcher();
+dispatcher.appendListener(3, function() {
+	console.log("Got event 3.");
 });
-dispatcher.appendListener(5, []() {
-	std::cout << "Got event 5." << std::endl;
+dispatcher.appendListener(5, () => {
+	console.log("Got event 5.");
 });
-dispatcher.appendListener(5, []() {
-	std::cout << "Got another event 5." << std::endl;
+dispatcher.appendListener(5, function() {
+	console.log("Got another event 5.");
 });
-// dispatch event 3
 dispatcher.dispatch(3);
-// dispatch event 5
 dispatcher.dispatch(5);
 ```
 
 ### Using EventQueue
-```c++
-eventjs::EventQueue<int, void (const std::string &, const bool)> queue;
-
-dispatcher.appendListener(3, [](const std::string s, bool b) {
-	std::cout << std::boolalpha << "Got event 3, s is " << s << " b is " << b << std::endl;
+```javascript
+let queue = new eventjs.EventQueue();
+queue.appendListener(3, function(s, n) {
+	console.log("Got event 3, s is", s, "n is", n);
 });
-dispatcher.appendListener(5, [](const std::string s, bool b) {
-	std::cout << std::boolalpha << "Got event 5, s is " << s << " b is " << b << std::endl;
+queue.appendListener(5, (s, n) => {
+	console.log("Got event 5, s is", s, "n is", n);
+});
+queue.appendListener(5, function(s, n) {
+	console.log("Got another event 5, s is", s, "n is", n);
 });
 
+// Enqueue the events, the first argument is always the event type.
 // The listeners are not triggered during enqueue.
-queue.enqueue(3, "Hello", true);
-queue.enqueue(5, "World", false);
+queue.enqueue(3, "Hello", 38);
+queue.enqueue(5, "World", 58);
 
 // Process the event queue, dispatch all queued events.
 queue.process();
@@ -114,18 +120,8 @@ queue.process();
 * [FAQs, tricks, and tips](doc/faq.md)
 * There are compilable tutorials in the unit tests.
 
-## Build the unit tests
+## Run the unit tests
 
-The library itself is header only and doesn't need building.  
-The unit test requires CMake to build, and there is a makefile to ease the building.  
-Go to folder `tests/build`, then run `make` with different target.
-- `make vc17` #generate solution files for Microsoft Visual Studio 2017, then open eventpptest.sln in folder project_vc17
-- `make vc15` #generate solution files for Microsoft Visual Studio 2015, then open eventpptest.sln in folder project_vc15
-- `make mingw` #build using MinGW
-- `make linux` #build on Linux
-
-## Motivations
-
-I (wqking) am a big fan of observer pattern (publish/subscribe pattern), and I used this pattern extensively in my code. I either used GCallbackList in my [cpgf library](https://github.com/cpgf/cpgf) which is too simple and unsafe (not support multi-threading or nested events), or repeated coding event dispatching mechanism such as I did in my [Gincu game engine](https://github.com/wqking/gincu) (the latest version has be rewritten to use eventjs). Both or these methods are neither fun nor robust.  
-Thanking to C++11, now it's quite easy to write a reusable event library with beautiful syntax (it's a nightmare to simulate the variadic template in C++03), so here is `eventjs`.
-
+```
+npm test
+```

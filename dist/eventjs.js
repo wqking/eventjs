@@ -1,6 +1,26 @@
-/*eventjs v0.0.1, by wqking, https://github.com/wqking/eventjs, @preserve*/
+// eventjs library
+// Copyright (C) 2019 Wang Qi (wqking)
+// Github: https://github.com/wqking/eventjs
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+/*eventjs v0.0.1, by wqking, https://github.com/wqking/eventjs @preserve*/
 if (eventjs === undefined) {
     var eventjs = {};
+}
+
+if (typeof define === "function" && define.amd) {
+    define(function() {
+        return eventjs;
+    });
+} else if (typeof module === "object" && module.exports) {
+    module.exports = eventjs;
 }
 
 (function(ns) {
@@ -16,7 +36,7 @@ if (eventjs === undefined) {
         this._tail = null;
         this._currentCounter = 0;
         params = params || {};
-        this._canContinueInvoking = params.hasOwnProperty("canContinueInvoking") ? !!params.canContinueInvoking : null;
+        this._canContinueInvoking = params.hasOwnProperty("canContinueInvoking") ? params.canContinueInvoking : null;
         this._argumentsAsArray = params.hasOwnProperty("argumentsAsArray") ? !!params.argumentsAsArray : false;
         if (this._argumentsAsArray) {
             this.dispatch = this._dispatchArgumentsAsArray;
@@ -85,7 +105,8 @@ if (eventjs === undefined) {
         if (this._tail == node) {
             this._tail = node._previous;
         }
-        node._counter = 0;
+        // Mark it as deleted
+                node._counter = 0;
         return true;
     };
     proto.empty = function() {
@@ -96,7 +117,9 @@ if (eventjs === undefined) {
     };
     proto.hasAny = function() {
         return !!this._head;
-    };
+    }
+    // duplicated code for performance reason
+    ;
     proto._dispatchArgumentsAsArray = function() {
         var counter = this._currentCounter;
         var node = this._head;
@@ -185,28 +208,18 @@ if (eventjs === undefined) {
     proto._getNextCounter = function() {
         var result = ++this._currentCounter;
         if (result == 0) {
+            // overflow, let's reset all nodes' counters.
             var node = this._head;
             while (node) {
                 node._counter = 1;
                 node = node._next;
             }
-            result = ++currentCounter;
+            result = ++this._currentCounter;
         }
         return result;
     };
     ns.CallbackList = CallbackList;
-    if (typeof define === "function" && define.amd) {
-        define(function() {
-            return ns;
-        });
-    } else if (typeof module === "object" && module.exports) {
-        module.exports = ns;
-    } else {}
 })(eventjs);
-
-if (eventjs === undefined) {
-    var eventjs = {};
-}
 
 (function(ns) {
     "use strict";
@@ -306,6 +319,19 @@ if (eventjs === undefined) {
             }
         }
     };
+    proto.forEach = function(event, func) {
+        var cbList = this._doGetCallbackList(event, false);
+        if (cbList) {
+            cbList.forEach(event, func);
+        }
+    };
+    proto.forEachIf = function(event, func) {
+        var cbList = this._doGetCallbackList(event, false);
+        if (cbList) {
+            return cbList.forEachIf(event, func);
+        }
+        return true;
+    };
     proto._doGetCallbackList = function(event, createOnNotFound) {
         if (this._eventCallbackListMap.hasOwnProperty(event)) {
             return this._eventCallbackListMap[event];
@@ -318,18 +344,7 @@ if (eventjs === undefined) {
         return null;
     };
     ns.EventDispatcher = EventDispatcher;
-    if (typeof define === "function" && define.amd) {
-        define(function() {
-            return ns;
-        });
-    } else if (typeof module === "object" && module.exports) {
-        module.exports = ns;
-    } else {}
 })(eventjs);
-
-if (eventjs === undefined) {
-    var eventjs = {};
-}
 
 (function(ns) {
     "use strict";
@@ -393,18 +408,7 @@ if (eventjs === undefined) {
         return null;
     };
     ns.EventQueue = EventQueue;
-    if (typeof define === "function" && define.amd) {
-        define(function() {
-            return ns;
-        });
-    } else if (typeof module === "object" && module.exports) {
-        module.exports = ns;
-    } else {}
 })(eventjs);
-
-if (eventjs === undefined) {
-    var eventjs = {};
-}
 
 (function(ns) {
     "use strict";
@@ -430,11 +434,4 @@ if (eventjs === undefined) {
         return true;
     };
     ns.MixinFilter = MixinFilter;
-    if (typeof define === "function" && define.amd) {
-        define(function() {
-            return ns;
-        });
-    } else if (typeof module === "object" && module.exports) {
-        module.exports = ns;
-    } else {}
 })(eventjs);

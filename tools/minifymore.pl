@@ -2,6 +2,10 @@
 use strict;
 use warnings;
 
+my %wordToReplace = (
+	qr/\s*\@preserve\s*/ => '',
+);
+
 &doMain;
 
 sub doMain
@@ -16,22 +20,22 @@ sub doMain
 	my $content = join('', <FH>);
 	close FH;
 	
-	my %wordToReplace = ();
-	
 	while($content =~ /\b_([\w\d_]+)\b/msg) {
-		$wordToReplace{'_' . $1} = 1;
+		my $key = '_' . $1;
+		$key = qr/\b$key\b/;
+		$wordToReplace{$key} = undef;
 	}
 	
 	my $index = 0;
 	foreach my $key (keys %wordToReplace) {
-		$wordToReplace{$key} = &doGetReplacer($index);
+		$wordToReplace{$key} = &doGetReplacer($index) unless defined $wordToReplace{$key};
 		++$index;
 		#print $key, " ", $wordToReplace{$key}, "\n";
 	}
 	
 	foreach my $key (keys %wordToReplace) {
 		my $replacer = $wordToReplace{$key};
-		$content =~ s/\b$key\b/$replacer/msg;
+		$content =~ s/$key/$replacer/msg;
 	}
 
 	open FH, '>' . $fileName or die "Can't write $fileName.\n";

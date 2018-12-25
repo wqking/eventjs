@@ -11,41 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-;(function(ns) {
-'use strict';
+/*eventjs v0.0.1, by wqking, https://github.com/wqking/eventjs @preserve*/
 
-var _callbacklist = ns;
+if(eventjs === undefined) { var eventjs = {}; }
 
-function MixinFilter(params)
-{
-	this._filterList = new _callbacklist.CallbackList(params);
+if (typeof define === 'function' && define.amd) {
+	define(function () { return eventjs;	});
 }
-
-var proto = MixinFilter.prototype;
-
-proto.appendFilter = function(filter)
-{
-	this._filterList.append(filter);
+else if (typeof module === 'object' && module.exports){
+	module.exports = eventjs;
 }
-
-proto.removeFilter = function(handle)
-{
-	this._filterList.remove(handle);
-}
-
-proto.mixinBeforeDispatch = function(args)
-{
-	if(! this._filterList.empty()) {
-		if(! this._filterList.forEachIf(function(callback) {
-			return callback.call(callback, args);
-		})) {
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-ns.MixinFilter = MixinFilter;
-
-})(eventjs);

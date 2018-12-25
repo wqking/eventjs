@@ -5,10 +5,15 @@
   "main": "dist/eventjs.js",
   "module": "dist/eventjs.min.js",
   "scripts": {
-    "build": "sh build.sh",
-    "pretest": "uglifyjs --beautify --comments --output dist/eventjs.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js",
+    "build": "npm run builddev && npm run buildmin && npm run buildcd && npm run buildcdq",
+    "pretest": "npm run builddev",
     "test": "mocha tests/unittest/*.js",
-    "prepublish": "npm test"
+    "prepublish": "npm test",
+	
+	"builddev" : "uglifyjs --beautify --comments all --output dist/eventjs.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js",
+	"buildmin" : "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js && perl tools/minifymore.pl dist/eventjs.min.js",
+	"buildcd" : "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.cd.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js && perl tools/minifymore.pl dist/eventjs.cd.min.js",
+	"buildcdq" : "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.cdq.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js && perl tools/minifymore.pl dist/eventjs.cdq.min.js"
   },
   "keywords": [
     "modules",
