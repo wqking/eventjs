@@ -103,22 +103,16 @@ queue.process();
 
 ## Documentations
 
-* [Overview, thread and exception safety](doc/introduction.md)
+* [Introductions](doc/introduction.md)
 * [Tutorials of CallbackList](doc/tutorial_callbacklist.md)
 * [Tutorials of EventDispatcher](doc/tutorial_eventdispatcher.md)
 * [Tutorials of EventQueue](doc/tutorial_eventqueue.md)
 * [Class CallbackList](doc/callbacklist.md)
 * [Class EventDispatcher](doc/eventdispatcher.md)
 * [Class EventQueue](doc/eventqueue.md)
-* [Utility class CounterRemover -- auto remove listeners after triggered certain times](doc/counterremover.md)
-* [Utility class ConditionalRemover -- auto remove listeners when certain condition is satisfied](doc/conditionalremover.md)
-* [Utility class ScopedRemover -- auto remove listeners when out of scope](doc/scopedremover.md)
-* [Document of utilities](doc/eventutil.md)
-* [Policies -- configure eventjs](doc/policies.md)
+* [Parameters object -- configure eventjs](doc/parameters.md)
 * [Mixins -- extend eventjs](doc/mixins.md)
-* [Performance benchmarks](doc/benchmark.md)
-* [FAQs, tricks, and tips](doc/faq.md)
-* There are compilable tutorials in the unit tests.
+* There are source code of tutorials in the unit tests.
 
 ## Run the unit tests
 

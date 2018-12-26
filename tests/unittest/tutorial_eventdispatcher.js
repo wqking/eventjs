@@ -124,4 +124,50 @@ describe('Tutorial: EventDispatcher', () => {
 		// The first argument is MyEvent.
 		dispatcher.dispatch({ type: 3, canceled: false });
 	});
+
+	it('tutorial event filter, ', () => {
+		let dispatcher = new eventjs.EventDispatcher({
+			mixins: [ new eventjs.MixinFilter() ],
+			argumentPassingMode: eventjs.EventDispatcher.argumentPassingIncludeEvent
+		});
+
+		dispatcher.appendListener(3, function(e, i, s) {
+			console.log("Got event 3, i was 1 but actural is", i, "s was Hello but actural is", s);
+		});
+		dispatcher.appendListener(5, function() {
+			console.log("Shout not got event 5");
+		});
+
+		// Add three event filters.
+
+		// The first filter modifies the input arguments to other values, then the subsequence filters
+		// and listeners will see the modified values.
+		dispatcher.appendFilter(function(args) {
+			console.log("Filter 1, e is", args[0], "passed in i is", args[1], "s is", args[2]);
+			args[1] = 38;
+			args[2] = "Hi";
+			console.log("Filter 1, changed i is", args[1], "s is", args[2]);
+			return true;
+		});
+
+		// The second filter filters out all event of 5. So no listeners on event 5 can be triggered.
+		// The third filter is not invoked on event 5 also.
+		dispatcher.appendFilter(function(args) {
+			console.log("Filter 2, e is", args[0], "passed in i is", args[1], "s is", args[2]);
+			if(args[0] === 5) {
+				return false;
+			}
+			return true;
+		});
+
+		// The third filter just prints the input arguments.
+		dispatcher.appendFilter(function(args) {
+			console.log("Filter 3, e is", args[0], "passed in i is", args[1], "s is", args[2]);
+			return true;
+		});
+
+		// Dispatch the events, the first argument is always the event type.
+		dispatcher.dispatch(3, 1, "Hello");
+		dispatcher.dispatch(5, 2, "World");
+	});
 });

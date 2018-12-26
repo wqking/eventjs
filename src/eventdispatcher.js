@@ -29,7 +29,7 @@ function EventDispatcher(params)
 	params = params || {};
 	this._params = params;
 	this._getEvent = typeof params.getEvent === 'function' ? params.getEvent : null;
-	this._argumentPassingMode = params.hasOwnProperty('argumentPassingMode') ? params.argumentPassingMode : EventDispatcher._defaultArgumentPassingMode;
+	this._argumentPassingMode = params.hasOwnProperty('argumentPassingMode') ? params.argumentPassingMode : EventDispatcher.defaultArgumentPassingMode;
 	this._argumentsAsArray = params.hasOwnProperty('argumentsAsArray') ? !! params.argumentsAsArray : false;
 	this._mixins = params.mixins;
 	this._hasMixins = this._mixins && this._mixins.length > 0;
@@ -42,17 +42,7 @@ function EventDispatcher(params)
 
 EventDispatcher.argumentPassingIncludeEvent = 1;
 EventDispatcher.argumentPassingExcludeEvent = 2;
-EventDispatcher._defaultArgumentPassingMode = 2;
-
-EventDispatcher.setDefaultArgumentPassingMode = function(value)
-{
-	EventDispatcher._defaultArgumentPassingMode = value;
-}
-
-EventDispatcher.getDefaultArgumentPassingMode = function()
-{
-	return EventDispatcher._defaultArgumentPassingMode;
-}
+EventDispatcher.defaultArgumentPassingMode = 2;
 
 var proto = EventDispatcher.prototype;
 
