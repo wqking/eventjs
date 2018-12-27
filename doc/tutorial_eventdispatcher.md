@@ -142,6 +142,7 @@ dispatcher.dispatch({ type: 3, message: "Hello world", param: 38 }, true);
 > Event::param is 38  
 > b is true  
 
-**Remarks**
+**Remarks**  
+
 A common situation is an Event class is defined as the base class, all other events derive from Event, and the actual event type is a data member of Event (think QEvent in Qt). To let EventDispatcher knows how to get the event type from class Event, parameter `getEvent` is used.  
 

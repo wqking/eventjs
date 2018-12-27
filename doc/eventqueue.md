@@ -3,7 +3,6 @@
 ## Table Of Contents
 
 - [API reference](#apis)
-- [Internal data structure](#internal-data-structure)
 
 ## Description
 

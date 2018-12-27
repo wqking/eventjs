@@ -349,7 +349,7 @@ if (typeof define === "function" && define.amd) {
     EventQueue.prototype = Object.create(ns.EventDispatcher.prototype);
     var proto = EventQueue.prototype;
     proto.enqueue = function() {
-        this._queueList.push(Array.prototype.slice.call(arguments, 0));
+        this._queueList.push(arguments);
     };
     proto.process = function() {
         var list = this._queueList;

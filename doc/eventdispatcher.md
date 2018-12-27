@@ -5,7 +5,6 @@
 - [API reference](#apis)
 - [Nested listener safety](#nested-listener-safety)
 - [Time complexities](#time-complexities)
-- [Internal data structure](#internal-data-structure)
 
 ## Description
 

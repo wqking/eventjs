@@ -6,8 +6,8 @@ eventjs is a JavaScript event library that provides tools that enable your appli
 
 - **Powerful**
   - Supports synchronous event dispatching and asynchronous event queue.
-  - Configurable and extensible.
   - Supports event filter via mixins.
+  - Configurable and extensible.
 - **Robust**
   - Supports nested event. During the process of handling an event, a listener can safely dispatch event and append/prepend/insert/remove other listeners.
   - Doesn't depend on HTML DOM. eventjs works for non-browser environment.
@@ -49,6 +49,12 @@ let eventjs = require('wqking-eventjs');
 <script src="dist/eventjs.min.js"></script>
 ```
 
+#### Or CDN
+
+```html
+<script src="https://unpkg.com/wqking-eventjs/dist/eventjs.min.js"></script>
+```
+
 `eventjs` is available and no need to import.
 
 ### Using CallbackList
@@ -66,6 +72,8 @@ callbackList.dispatch();
 ### Using EventDispatcher
 ```javascript
 let dispatcher = new eventjs.EventDispatcher();
+// Add an event 3 which is integer. The event
+// can be any type such as a string.
 dispatcher.appendListener(3, function() {
 	console.log("Got event 3.");
 });
