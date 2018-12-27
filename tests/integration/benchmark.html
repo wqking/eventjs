@@ -1,0 +1,444 @@
+<html>
+
+<head>
+<script src="../../dist/eventjs.js"></script>
+
+<script>
+function logMessage()
+{
+	let text = '';
+	for(let i = 0; i < arguments.length; ++i) {
+		if(i > 0) {
+			text += ' ';
+		}
+		text += arguments[i];
+	}
+	document.getElementById("logOutput").value += text + "\n";
+	console.log(text);
+}
+
+function clearLog()
+{
+	document.getElementById("logOutput").value = "";
+}
+
+function getTime()
+{
+	return Date.now();
+}
+
+function formatIterations(iterations) {
+	return iterations.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function formatDuration(duration)
+{
+	return "" + duration;
+}
+
+function formatParams(params)
+{
+	if(! params) {
+		return 'no params';
+	}
+	
+	let result = '';
+
+	if(params.hasOwnProperty('getEvent')) {
+		result += 'getEvent: true ';
+	}
+	else {
+		result += 'getEvent: false ';
+	}
+
+	result += 'argumentPassingMode: ';
+	if(params.hasOwnProperty('argumentPassingMode')) {
+		let argumentPassingMode = params.argumentPassingMode;
+		if(argumentPassingMode === eventjs.EventDispatcher.argumentPassingIncludeEvent) {
+			result += 'include ';
+		}
+		else {
+			result += 'exclude ';
+		}
+	}
+	else {
+		result += 'default ';
+	}
+	
+	result += 'argumentsAsArray: ';
+	if(params.hasOwnProperty('argumentsAsArray')) {
+		if(params.argumentsAsArray) {
+			result += 'true ';
+		}
+		else {
+			result += 'false ';
+		}
+	}
+	else {
+		result += 'default ';
+	}
+	
+	return result;
+}
+
+function benchmarkCallbackListNoArgs(iterations, listeners, params)
+{
+	let callbackList = new eventjs.CallbackList(params);
+	for(let i = 0; i < listeners; ++i) {
+		callbackList.append(function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		callbackList.dispatch();
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkCallbackListNoArgs',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkCallbackListOneArg(iterations, listeners, params)
+{
+	let callbackList = new eventjs.CallbackList(params);
+	for(let i = 0; i < listeners; ++i) {
+		callbackList.append(function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		callbackList.dispatch(1);
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkCallbackListOneArg',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkCallbackListFiveArgs(iterations, listeners, params)
+{
+	let callbackList = new eventjs.CallbackList(params);
+	for(let i = 0; i < listeners; ++i) {
+		callbackList.append(function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		callbackList.dispatch(1, 2, 3, 4, 5);
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkCallbackListFiveArgs',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkDispatcherNoArgs(iterations, listeners, params)
+{
+	let dispatcher = new eventjs.EventDispatcher(params);
+	for(let i = 0; i < listeners; ++i) {
+		dispatcher.appendListener(1, function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		dispatcher.dispatch(1);
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkDispatcherNoArgs',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkDispatcherOneArg(iterations, listeners, params)
+{
+	let dispatcher = new eventjs.EventDispatcher(params);
+	for(let i = 0; i < listeners; ++i) {
+		dispatcher.appendListener(1, function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		dispatcher.dispatch(1, 5);
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkDispatcherOneArg',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkDispatcherFiveArgs(iterations, listeners, params)
+{
+	let dispatcher = new eventjs.EventDispatcher(params);
+	for(let i = 0; i < listeners; ++i) {
+		dispatcher.appendListener(1, function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		dispatcher.dispatch(1, 1, 2, 3, 4, 5);
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkDispatcherFiveArgs',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkQueueNoArgs(iterations, listeners, params)
+{
+	const queueSize = 100;
+	const eventCount = queueSize;
+	iterations /= queueSize;
+	let queue = new eventjs.EventQueue(params);
+	for(let i = 0; i < listeners; ++i) {
+		queue.appendListener(i % eventCount, function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		for(let k = 0; k < queueSize; ++k) {
+			queue.enqueue(k % eventCount);
+		}
+		queue.process();
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkQueueNoArgs',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'queueSize:', queueSize,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkQueueOneArg(iterations, listeners, params)
+{
+	const queueSize = 100;
+	const eventCount = queueSize;
+	iterations /= queueSize;
+	let queue = new eventjs.EventQueue(params);
+	for(let i = 0; i < listeners; ++i) {
+		queue.appendListener(i % eventCount, function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		for(let k = 0; k < queueSize; ++k) {
+			queue.enqueue(k % eventCount, 1);
+		}
+		queue.process();
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkQueueOneArg',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'queueSize:', queueSize,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkQueueFiveArgs(iterations, listeners, params)
+{
+	const queueSize = 100;
+	const eventCount = queueSize;
+	iterations /= queueSize;
+	let queue = new eventjs.EventQueue(params);
+	for(let i = 0; i < listeners; ++i) {
+		queue.appendListener(i % eventCount, function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		for(let k = 0; k < queueSize; ++k) {
+			queue.enqueue(k % eventCount, 1, 2, 3, 4, 5);
+		}
+		queue.process();
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkQueueFiveArgs',
+		'time:', formatDuration(duration),
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'queueSize:', queueSize,
+		'params:', formatParams(params)
+	);
+}
+
+function benchmarkDomListeners(iterations, listeners)
+{
+	iterations = Math.min(iterations, 1000 * 100);
+
+	let event = new Event('ev');
+	let dispatcher =  document.createTextNode('');
+	for(let i = 0; i < listeners; ++i) {
+		dispatcher.addEventListener('ev', function() {});
+	}
+	
+	let start = getTime();
+
+	for(let i = 0; i < iterations; ++i) {
+		dispatcher.dispatchEvent(event);
+	}
+	let duration = getTime() - start;
+	logMessage(
+		'benchmarkDomListeners',
+		'iterations:', formatIterations(iterations),
+		'listeners:', listeners,
+		'time:', formatDuration(duration)
+	);
+}
+
+let benchmarkTasks = null;
+function runOneStep()
+{
+	if(benchmarkTasks && benchmarkTasks.length > 0) {
+		let task = benchmarkTasks.shift();
+		task();
+		setTimeout(runOneStep, 1);
+	}
+	else {
+		logMessage("Done.");
+	}
+}
+
+function buildBenchmarkList()
+{
+	let benchmarkList = [];
+	
+	const iterations = 1000 * 1000 * 1;
+	const listenerList = [ 0, 1, 10, 50 ];
+	let getEvent = function(e) { return e; };
+	const dispatcherParamsList = [
+		null,
+		{ argumentsAsArray : true },
+		//{ getEvent: getEvent },
+	];
+	const callbackListParamsList = [
+		null,
+		{ argumentsAsArray : true },
+	];
+	
+	for(let i = 0; i < callbackListParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkCallbackListNoArgs(iterations, listenerList[k], callbackListParamsList[i]); });
+		}
+	}
+	for(let i = 0; i < callbackListParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkCallbackListOneArg(iterations, listenerList[k], callbackListParamsList[i]); });
+		}
+	}
+	for(let i = 0; i < callbackListParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkCallbackListFiveArgs(iterations, listenerList[k], callbackListParamsList[i]); });
+		}
+	}
+
+	for(let i = 0; i < dispatcherParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkDispatcherNoArgs(iterations, listenerList[k], dispatcherParamsList[i]); });
+		}
+	}
+	for(let i = 0; i < dispatcherParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkDispatcherOneArg(iterations, listenerList[k], dispatcherParamsList[i]); });
+		}
+	}
+	for(let i = 0; i < dispatcherParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkDispatcherFiveArgs(iterations, listenerList[k], dispatcherParamsList[i]); });
+		}
+	}
+
+	for(let i = 0; i < dispatcherParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkQueueNoArgs(iterations, listenerList[k], dispatcherParamsList[i]); });
+		}
+	}
+	for(let i = 0; i < dispatcherParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkQueueOneArg(iterations, listenerList[k], dispatcherParamsList[i]); });
+		}
+	}
+	for(let i = 0; i < dispatcherParamsList.length; ++i) {
+		for(let k = 0; k < listenerList.length; ++k) {
+			benchmarkList.push(function() { benchmarkQueueFiveArgs(iterations, listenerList[k], dispatcherParamsList[i]); });
+		}
+	}
+
+	return benchmarkList;
+
+	for(let k = 0; k < listenerList.length; ++k) {
+		benchmarkList.push(function() { benchmarkDomListeners(iterations, listenerList[k]); });
+	}
+	
+	return benchmarkList;
+}
+
+function startBenchmark()
+{
+	clearLog();
+	benchmarkTasks = buildBenchmarkList();
+	runOneStep();
+}
+
+function stopBenchmark()
+{
+	benchmarkTasks = null;
+}
+
+</script>
+
+</head>
+
+<body>
+
+<div>
+<button onclick="startBenchmark();">Run benchmark</button>
+<button onclick="stopBenchmark();">Stop benchmark</button>
+</div>
+
+<div>
+<textarea id="logOutput" style="width:100%;height:100%">
+</textarea>
+</div>
+
+</body>
+
+</html>
