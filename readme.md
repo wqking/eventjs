@@ -49,13 +49,15 @@ let eventjs = require('wqking-eventjs');
 <script src="dist/eventjs.min.js"></script>
 ```
 
+Name `eventjs` is ready to use and no need to import.
+
 #### Or CDN
 
 ```html
 <script src="https://unpkg.com/wqking-eventjs/dist/eventjs.min.js"></script>
 ```
 
-`eventjs` is available and no need to import.
+Name `eventjs` is ready to use and no need to import.
 
 ### Using CallbackList
 ```javascript

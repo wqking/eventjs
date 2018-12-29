@@ -370,6 +370,8 @@ function buildBenchmarkList()
 		}
 	}
 
+return benchmarkList;
+
 	for(let i = 0; i < dispatcherParamsList.length; ++i) {
 		for(let k = 0; k < listenerList.length; ++k) {
 			benchmarkList.push(function() { benchmarkDispatcherNoArgs(iterations, listenerList[k], dispatcherParamsList[i]); });

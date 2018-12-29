@@ -9,11 +9,10 @@
     "pretest": "npm run builddev",
     "test": "mocha tests/unittest/*.js",
     "prepublish": "npm test",
-	
-	"builddev" : "uglifyjs --beautify --comments all --output dist/eventjs.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js",
-	"buildmin" : "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js && perl tools/minifymore.pl dist/eventjs.min.js",
-	"buildcd" : "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.cd.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js && perl tools/minifymore.pl dist/eventjs.cd.min.js",
-	"buildcdq" : "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.cdq.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js && perl tools/minifymore.pl dist/eventjs.cdq.min.js"
+    "builddev": "uglifyjs --beautify --comments all --output dist/eventjs.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js",
+    "buildmin": "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js src/mixins/mixinfilter.js && perl tools/minifymore.pl dist/eventjs.min.js",
+    "buildcd": "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.cd.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js && perl tools/minifymore.pl dist/eventjs.cd.min.js",
+    "buildcdq": "uglifyjs --comments --mangle --compress --source-map --output dist/eventjs.cdq.min.js src/exports.js src/callbacklist.js src/eventdispatcher.js src/eventqueue.js && perl tools/minifymore.pl dist/eventjs.cdq.min.js"
   },
   "keywords": [
     "modules",
@@ -44,6 +43,12 @@
   },
   "readmeFilename": "readme.md",
   "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
     "uglify-js": "^3.4.9"
   }
