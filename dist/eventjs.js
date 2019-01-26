@@ -123,10 +123,11 @@ if (typeof define === "function" && define.amd) {
     proto._dispatchArgumentsAsArray = function() {
         var counter = this._currentCounter;
         var node = this._head;
+        var canContinueInvoking = this._canContinueInvoking;
         while (node) {
             if (node._counter != 0 && counter >= node._counter) {
                 node._callback.call(this, arguments);
-                if (this._canContinueInvoking && !this._canContinueInvoking.call(this, arguments)) {
+                if (canContinueInvoking && !canContinueInvoking.call(this, arguments)) {
                     break;
                 }
             }
@@ -136,10 +137,11 @@ if (typeof define === "function" && define.amd) {
     proto._dispatchNotArgumentsAsArray = function() {
         var counter = this._currentCounter;
         var node = this._head;
+        var canContinueInvoking = this._canContinueInvoking;
         while (node) {
             if (node._counter != 0 && counter >= node._counter) {
                 node._callback.apply(this, arguments);
-                if (this._canContinueInvoking && !this._canContinueInvoking.apply(this, arguments)) {
+                if (canContinueInvoking && !canContinueInvoking.apply(this, arguments)) {
                     break;
                 }
             }
@@ -149,10 +151,11 @@ if (typeof define === "function" && define.amd) {
     proto._applyDispatchArgumentsAsArray = function(args) {
         var counter = this._currentCounter;
         var node = this._head;
+        var canContinueInvoking = this._canContinueInvoking;
         while (node) {
             if (node._counter != 0 && counter >= node._counter) {
                 node._callback.call(this, args);
-                if (this._canContinueInvoking && !this._canContinueInvoking.call(this, args)) {
+                if (canContinueInvoking && !canContinueInvoking.call(this, args)) {
                     break;
                 }
             }
@@ -162,10 +165,11 @@ if (typeof define === "function" && define.amd) {
     proto._applyDispatchNotArgumentsAsArray = function(args) {
         var counter = this._currentCounter;
         var node = this._head;
+        var canContinueInvoking = this._canContinueInvoking;
         while (node) {
             if (node._counter != 0 && counter >= node._counter) {
                 node._callback.apply(this, args);
-                if (this._canContinueInvoking && !this._canContinueInvoking.apply(this, args)) {
+                if (canContinueInvoking && !canContinueInvoking.apply(this, args)) {
                     break;
                 }
             }
