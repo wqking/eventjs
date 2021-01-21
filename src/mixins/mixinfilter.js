@@ -25,12 +25,12 @@ var proto = MixinFilter.prototype;
 
 proto.appendFilter = function(filter)
 {
-	this._filterList.append(filter);
+	return this._filterList.append(filter);
 }
 
 proto.removeFilter = function(handle)
 {
-	this._filterList.remove(handle);
+	return this._filterList.remove(handle);
 }
 
 proto.mixinBeforeDispatch = function(args)
